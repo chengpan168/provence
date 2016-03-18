@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.provence.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.provence.entity.User">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_modify" jdbcType="TIMESTAMP" property="gmtModify"/>
+    </resultMap>
+
+    <resultMap id="DtoResultMap" extends="BaseResultMap" type="com.provence.dto.UserDto">
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    id, name, phone, address, sex, gmt_create, gmt_modify
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.provence.entity.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user (id, name, phone,
+        address, sex, gmt_create, gmt_modify
+        )
+        values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+        #{address,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, now(), now()
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.provence.entity.User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create,
+            </if>
+            <if test="gmtModify != null">
+                gmt_modify,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtModify != null">
+                #{gmtModify,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.provence.entity.User">
+        update user
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtModify != null">
+                gmt_modify = now(),
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.provence.entity.User">
+    update user
+    set name = #{name,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modify = now()
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="countUser" parameterType="com.provence.mapper.query.UserQuery" resultType="long">
+        select count(*) from user
+        <where>
+            <if test="id != null">
+                id = #{id, jdbcType=BIGINT}
+            </if>
+            <if test="name != null">
+                name like concat('%', #{name, jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="phone != null">
+                phone = #{phone, jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    <select id="listUser" parameterType="com.provence.mapper.query.UserQuery" resultMap="DtoResultMap">
+
+        <include refid="Page.header"/>
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        <where>
+            <if test="id != null">
+                id = #{id, jdbcType=BIGINT}
+            </if>
+            <if test="name != null">
+                name like concat('%', #{name, jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="phone != null">
+                phone = #{phone, jdbcType=VARCHAR}
+            </if>
+        </where>
+
+        order by
+        <if test="sort.property == 'name'">
+            name ${sort.direction},
+        </if>
+        id desc
+        <include refid="Page.footer"/>
+    </select>
+</mapper>
