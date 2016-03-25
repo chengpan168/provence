@@ -1,0 +1,10 @@
+@import "../common/common.css";
+
+
+
+.header {
+    background: #ffffff;
+    transition: border-image .4s cubic-bezier(0, 0.55, 0.82, 0.03);
+    background: rgba(255,255,255,.95);
+    padding:5px 0;
+}
